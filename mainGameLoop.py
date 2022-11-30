@@ -20,7 +20,7 @@ class AlienInvasion:
         #here when we call it we just need to pass the second parameter
         #which in the ship.py init would be the ai_game but here below is just 
         #self
-        
+
         self.ship = Ship(self)
         
 
@@ -36,7 +36,11 @@ class AlienInvasion:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    self.ship.rect.x += 1
+                    self.ship.rect.x += 6
+                if event.key == pygame.K_LEFT:
+                    self.ship.rect.x -= 6
+           
+                
     
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
