@@ -1,7 +1,10 @@
 import sys
+from time import sleep
+
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -16,6 +19,9 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
+
+        # create a instance to store game statistics
+        self.stats = GameStats(self)
 
         # After reading, it seems confusing that in ship.py we have two
         # parametres for __init__(self,ai_game)
@@ -64,6 +70,21 @@ class AlienInvasion:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
+
+    def _ship_hit(self):
+        """Respond to the ship being hit"""
+        self.stats.ships_left -= 1
+
+        # Get rid of remaing bullets and aliens
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create a new fleet and center the ship
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # Pause
+        sleep(0.5)
 
     def _fire_bullet(self):
         """Create new bullet and add it to the bullets group"""
@@ -147,7 +168,7 @@ class AlienInvasion:
 
         # Look for alien-ship collisions.
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
-            print("Ship hit game over!!!!!!!")         
+            self._ship_hit()        
     
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
